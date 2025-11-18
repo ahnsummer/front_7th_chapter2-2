@@ -33,7 +33,7 @@ export const setDomProps = (dom: HTMLElement, props: Record<string, any>): void 
       Object.keys(value).forEach((styleKey) => {
         if (!isStyleKey(dom.style, styleKey)) return;
 
-        styleString += `${styleKey}: ${value[styleKey]};`;
+        styleString += `${styleKey.replace(/([A-Z])/g, "-$1").toLowerCase()}: ${value[styleKey]};`;
       });
 
       dom.setAttribute("style", styleString);
@@ -109,7 +109,7 @@ export const updateDomProps = (
       Object.keys(nextValue).forEach((styleKey) => {
         if (!isStyleKey(dom.style, styleKey)) return;
 
-        styleString += `${styleKey}: ${nextValue[styleKey]};`;
+        styleString += `${styleKey.replace(/([A-Z])/g, "-$1").toLowerCase()}: ${nextValue[styleKey]};`;
       });
 
       dom.setAttribute("style", styleString);
