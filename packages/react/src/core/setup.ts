@@ -3,6 +3,7 @@ import { VNode } from "./types";
 // import { removeInstance } from "./dom";
 // import { cleanupUnusedHooks } from "./hooks";
 import { render } from "./render";
+// import { removeInstance } from "./dom";
 
 /**
  * Mini-React 애플리케이션의 루트를 설정하고 첫 렌더링을 시작합니다.
@@ -18,14 +19,14 @@ export const setup = (rootNode: VNode | null, container: HTMLElement): void => {
   // 2. 이전 렌더링 내용을 정리하고 컨테이너를 비웁니다.
   // if (context.root.instance) {
   //   // removeInstance(container, context.root.instance);
-  //   cleanupUnusedHooks();
+  //   // cleanupUnusedHooks();
   // }
 
   container.innerHTML = "";
 
   // 3. 루트 컨텍스트와 훅 컨텍스트를 리셋합니다.
   context.root.reset({ container, node: rootNode });
-  // context.hooks.clear();
+  context.hooks.clear();
 
   // 4. 첫 렌더링을 실행합니다.
   render();

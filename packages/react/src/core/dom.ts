@@ -47,6 +47,10 @@ export const setDomProps = (dom: HTMLElement, props: Record<string, any>): void 
       return;
     }
 
+    if (key === "value" && dom instanceof HTMLInputElement) {
+      dom.value = value;
+    }
+
     // 일반 속성
     if (value === true) {
       dom.setAttribute(key, "");
@@ -120,6 +124,10 @@ export const updateDomProps = (
     if (key === "className") {
       dom.setAttribute("class", nextValue || "");
       return;
+    }
+
+    if (key === "value" && dom instanceof HTMLInputElement) {
+      dom.value = nextValue;
     }
 
     if (nextValue === true) {

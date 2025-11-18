@@ -2,7 +2,9 @@ import { context } from "./context";
 // import { getDomNodes, insertInstance } from "./dom";
 import { reconcile } from "./reconciler";
 import { cleanupUnusedHooks } from "./hooks";
-import { withEnqueue } from "../utils";
+import { enqueue, withEnqueue } from "../utils";
+import { EffectHook } from "./types";
+import { HookTypes } from "./constants";
 
 /**
  * 루트 컴포넌트의 렌더링을 수행하는 함수입니다.
@@ -19,7 +21,36 @@ export const render = (): void => {
 
   // 3. 사용되지 않은 훅들을 정리(cleanupUnusedHooks)합니다.
   cleanupUnusedHooks();
+
+  flushEffects();
 };
+
+function flushEffects() {
+  const effectsToRun = [...context.effects.queue];
+  context.effects.queue = [];
+
+  effectsToRun.forEach(({ path, cursor }) => {
+    const hooks = context.hooks.state.get(path);
+    if (!hooks) return;
+
+    const effectHook = hooks[cursor] as EffectHook;
+    if (!effectHook || effectHook.kind !== HookTypes.EFFECT) return;
+
+    // cleanup 먼저 실행
+    if (effectHook.cleanup) {
+      effectHook.cleanup();
+      effectHook.cleanup = null;
+    }
+
+    // effect 비동기 실행
+    enqueue(() => {
+      const cleanup = effectHook.effect();
+      if (cleanup) {
+        effectHook.cleanup = cleanup;
+      }
+    });
+  });
+}
 
 /**
  * `render` 함수를 마이크로태스크 큐에 추가하여 중복 실행을 방지합니다.
