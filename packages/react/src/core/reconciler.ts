@@ -104,7 +104,12 @@ export const reconcile = (
         context.hooks.componentStack.pop();
       }
 
-      const childInstance = reconcile(parentDom, null, childNode, path);
+      const childPath =
+        childNode && typeof childNode.type === "function"
+          ? createChildPath(path, childNode.key, 0, childNode.type, [childNode])
+          : path;
+
+      const childInstance = reconcile(parentDom, null, childNode, childPath);
 
       return {
         kind: NodeTypes.COMPONENT,
@@ -182,7 +187,12 @@ export const reconcile = (
       context.hooks.componentStack.pop();
     }
 
-    const childInstance = reconcile(parentDom, instance.children[0] || null, childNode, path);
+    const childPath =
+      childNode && typeof childNode.type === "function"
+        ? createChildPath(path, childNode.key, 0, childNode.type, [childNode])
+        : path;
+
+    const childInstance = reconcile(parentDom, instance.children[0] || null, childNode, childPath);
 
     return {
       ...instance,
