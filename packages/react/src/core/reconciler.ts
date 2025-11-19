@@ -110,6 +110,7 @@ export const reconcile = (
           : path;
 
       const childInstance = reconcile(parentDom, null, childNode, childPath);
+      // const childInstance = reconcile(parentDom, null, childNode, path);
 
       return {
         kind: NodeTypes.COMPONENT,
